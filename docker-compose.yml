@@ -1,0 +1,69 @@
+version: '3'
+services:
+  docker:
+    image: docker:dind
+    container_name: docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    ports:
+      - 2376:2376
+    networks:
+      - inminhouse
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+    privileged: true
+    command: --storage-driver=overlay2
+    restart: always
+  jenkins:
+    build: ./jenkins
+    container_name: jenkins
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    ports:
+      - 8080:8080
+      - 50000:50000
+    networks:
+      - inminhouse
+    volumes:
+      - jenkins-docker-certs:/certs/client:ro
+      - jenkins-data:/var/jenkins_home
+    restart: always
+  registry:
+    image: registry:2
+    container_name: inminhub
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:443
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt
+      - REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+    ports:
+      - 443:443
+    networks:
+      - inminhouse
+    volumes:
+      - inminhub:/var/lib/registry
+      - ./certs:/certs
+    restart: always
+  registry-ui:
+    image: joxit/docker-registry-ui:1.5-static
+    container_name: inminhub-ui
+    environment:
+      - REGISTRY_TITLE=INMINHOUSE Docker Registry
+      - REGISTRY_URL=https://inminhub
+    ports:
+      - 80:80
+    networks:
+      - inminhouse
+    restart: always
+
+networks:
+  inminhouse:
+volumes:
+  inminhub:
+    external: false
+  jenkins-docker-certs:
+    external: false
+  jenkins-data:
+    external: false

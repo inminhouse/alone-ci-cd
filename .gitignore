@@ -1,4 +1,3 @@
 certs/*.key
 certs/*.crt
-!certs.d/HELP.md
-certs.d/*:*
+certs.d/inminhub:443

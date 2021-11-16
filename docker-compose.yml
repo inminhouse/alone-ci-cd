@@ -5,6 +5,7 @@ services:
     container_name: docker
     environment:
       - DOCKER_TLS_CERTDIR=/certs
+      - GODEBUG=x509ignoreCN=0
     ports:
       - 2376:2376
     networks:
@@ -12,6 +13,7 @@ services:
     volumes:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
+      - ./certs.d:/etc/docker/certs.d
     privileged: true
     command: --storage-driver=overlay2
     restart: always

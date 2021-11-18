@@ -1,5 +1,5 @@
 # alone-ci-cd
-여행 커뮤니케이션 "혼자왔니" 프로젝트 CI/CD 구성 
+여행 커뮤니케이션 서비스 "혼자왔니" 프로젝트 CI/CD 구성 
 
 ## What you will get
 - Docker in Docker
